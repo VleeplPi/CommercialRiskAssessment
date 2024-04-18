@@ -546,6 +546,17 @@ fun InitValueFormComponent(
                         beta.value.toDouble()
 
                     )
+                    onClickMonteCarloPrepaymentRisk(
+                        prepayment_start.value.toDouble(),
+                                prepayment_end.value.toDouble(),
+                                t_start.value.toDouble(),
+                                t_end.value.toDouble(),
+                                dt_start.value.toDouble(),
+                                dt_end.value.toDouble(),
+                                beta_start.value.toDouble(),
+                                beta_end.value.toDouble(),
+                                countSimulation.value.toInt(),
+                    )
                     onClickMonteCarloPoolQualityRisk(
                     Npq_start.value.toDouble(),
                     Npq_end.value.toDouble(),
@@ -643,6 +654,7 @@ fun FormModalBottomSheet(
             windowInsets = BottomSheetDefaults.windowInsets,
 
             ) {
+
             content()
         }
 

@@ -27,6 +27,9 @@ class CommercialRiskCalculator(
     private val TAG: String = this.javaClass.simpleName
     private val numberUtil: NumberUtil = NumberUtil(2);
 
+    private var risksValues: List<Double> = emptyList()
+    private var risksLabels: List<String> = emptyList()
+
     fun simpleDeposit(): Double{
         /**сумма выплаты кредита по простой ставке**/
         Log.d(TAG, "SIMPLE DEPOSIT")
@@ -194,6 +197,13 @@ class CommercialRiskCalculator(
         return prepaymentRiskTable
     }
 
+    fun getRiskValues(): List<Double>{
+        return risksValues
+    }
+    fun getRiskLabels(): List<String>{
+        return risksLabels
+    }
+
 
 
     fun calculateRisk(): List<String>{
@@ -237,9 +247,11 @@ class CommercialRiskCalculator(
                 "Фактическая ставка: ${numberUtil.roundTo(factDeposit)}&\n" +
                 "Вся сумма оплаты по кредиту с учетом инфляции: ${numberUtil.roundTo(creditSumStartOperationWithInflation)} руб.&\n" +
                 "Фактические проценты за кредит: ${numberUtil.roundTo(factPercentsCredit)} руб.&" +
-                "Риск потери качества: ${poolQualityRisk} долл.&" +
-                "Риск, связанный с увеличением закупочной цены: ${numberUtil.roundTo(increasePurchasePrice)} долл.&" +
+                "Риск потери качества: ${poolQualityRisk*k2} руб.&" +
+                "Риск, связанный с увеличением закупочной цены: ${numberUtil.roundTo(increasePurchasePrice*k2)} руб.&" +
                 "Риск, определяемый предоплатой: ${numberUtil.roundTo(riskPrepayment)} руб."
+        risksLabels = listOf("Риск потери качества", "Риск, связанный с увеличением закупочной цены", "Риск, определяемый предоплатой")
+        risksValues = listOf(poolQualityRisk*k2,numberUtil.roundTo(increasePurchasePrice*k2),numberUtil.roundTo(riskPrepayment))
         return result.split("&")
     }
 
