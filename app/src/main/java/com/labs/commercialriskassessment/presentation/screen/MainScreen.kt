@@ -93,9 +93,11 @@ fun MainScreen(){
         onClickMonteCarloPoolQualityRisk = {Npq_start,Npq_end,Pq_start,Pq_end,iq_start,iq_end,countSimulation, ->
             val commercialRiskCalculator: CommercialRiskCalculator = CommercialRiskCalculator()
             resultPoolQuality.value = commercialRiskCalculator.monteCarloRiskPoolQuality(Npq_start,Npq_end,Pq_start,Pq_end,iq_start,iq_end,countSimulation)
+            Log.d(TAG, "resultPoolQuality: ${resultPoolQuality.value.size}")
         }
 
     )
+
 
     FormModalBottomSheet(
         openBottomSheet = showModalResult.value,
@@ -187,13 +189,9 @@ fun MainScreen(){
                 }
             }
 
-            items(1){i ->
-                LazyRow(
-                    userScrollEnabled = true
-
-                )
-                {
-                    items(headersPoolQuality) { header ->
+            items(1){tablePoolQuality ->
+                LazyRow(){
+                    items(headersPoolQuality){header ->
                         Text(
                             modifier = Modifier
                                 .border(1.dp, Color.Black)
@@ -204,29 +202,7 @@ fun MainScreen(){
                             textAlign = TextAlign.Start,
                             letterSpacing = 2.sp
                         )
-
                     }
-                }
-
-            }
-            items(resultPoolQuality.value){poolQualityRow ->
-                LazyRow(
-                    userScrollEnabled = true
-                ){
-                    items(poolQualityRow.size){rowIndex ->
-                        Text(
-                            modifier = Modifier
-                                .border(1.dp, Color.Black)
-                                .width(200.dp)
-                                .padding(5.dp),
-                            text = "${poolQualityRow[rowIndex]}",
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Start,
-                            letterSpacing = 2.sp
-                        )
-
-                    }
-
                 }
             }
         }

@@ -138,13 +138,14 @@ class CommercialRiskCalculator(
 
     }
 
-    fun monteCarloRiskPoolQuality(Npq_start:Double,
-                         Npq_end:Double,
-                         Pq_start:Double,
-                         Pq_end:Double,
-                         iq_start:Double,
-                         iq_end:Double,
-                         countSimulation: Int
+    fun monteCarloRiskPoolQuality(
+        Npq_start:Double,
+        Npq_end:Double,
+        Pq_start:Double,
+        Pq_end:Double,
+        iq_start:Double,
+        iq_end:Double,
+        countSimulation: Int
     ): Array<DoubleArray>{
         /**Метод Монте-Карло для исследования рисков
          * 1. риск товара плохого качества

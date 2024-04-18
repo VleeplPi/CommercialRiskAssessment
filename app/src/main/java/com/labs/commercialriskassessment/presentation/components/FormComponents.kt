@@ -546,16 +546,14 @@ fun InitValueFormComponent(
                         beta.value.toDouble()
 
                     )
-                    onClickMonteCarloPrepaymentRisk(
-                    prepayment_start.value.toDouble(),
-                    prepayment_end.value.toDouble(),
-                    t_start.value.toDouble(),
-                    t_end.value.toDouble(),
-                    dt_start.value.toDouble(),
-                    dt_end.value.toDouble(),
-                    beta_start.value.toDouble(),
-                    beta_end.value.toDouble(),
-                    countSimulation.value.toInt(),
+                    onClickMonteCarloPoolQualityRisk(
+                    Npq_start.value.toDouble(),
+                    Npq_end.value.toDouble(),
+                    Pq_start.value.toDouble(),
+                    Pq_end.value.toDouble(),
+                    iq_start.value.toDouble(),
+                    iq_end.value.toDouble(),
+                    countSimulation.value.toInt()
                     )
                 }
                 else{
@@ -594,14 +592,12 @@ fun InitValueFormComponent(
                 beta_start.value = "0.5"
                 beta_end.value = "1"
                 countSimulation.value = "20"
-                prepayment_start.value = "600000"
-                prepayment_end.value = "700000"
-                t_start.value = "2"
-                t_end.value = "4"
-                dt_start.value = "4"
-                dt_end.value = "8"
-                beta_start.value = "0.5"
-                beta_end.value = "1"
+                Npq_start.value = "600000"
+                Npq_end.value = "700000"
+                Pq_start.value = "2"
+                Pq_end.value = "4"
+                iq_start.value = "4"
+                iq_end.value = "8"
                 countSimulation.value = "20"
                 isLoading.value = false
 
