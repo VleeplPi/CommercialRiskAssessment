@@ -9,7 +9,17 @@ class CommercialRiskCalculator(
     private val n: Double, // срок кредита
     private val i: Double, // процентная ставка по кредиту
     private val k1: Double, // курс доллара на момент начала операции
-    private val k2: Double // курс доллара на момент окнчания операции
+    private val k2: Double, // курс доллара на момент окнчания операции
+    private val Npq: Double, // количество испорченного товара
+    private val Pq: Double, // стоимость товара хорошего качества
+    private val iq: Double, // скидка на испорченный товар
+    private val m: Int, // количество товаров с изменением цены
+    private val np: Int, // количество групп отваров с изменением цены
+    private val delta: Double, // разница в изменении цены
+    private val prepayment: Double, // размер предоплаты
+    private val t: Double, // время до фактического получения товара
+    private val dt: Double, // время фактического получения товара
+    private val beta: Double // коэффициент роста капитала
     ){
 
 
@@ -78,23 +88,82 @@ class CommercialRiskCalculator(
         return (Sk/Ii)
     }
 
+    fun riskPoolQuality():Double{
+//        Npq:Double, Pq:Double, iq:Double
+        /**
+         * риск товара плохого качества
+         * Npq - количество испорченного товара
+         * Pq - стоимость товара хорошего качества
+         * iq - скидка на испорченный товар
+         * **/
+        Log.d(TAG, "riskPoolQuality")
+
+        val Ppq: Double = Pq - (Pq*iq) // стоимость испорченного товара с учетом скидки на него
+        return Npq *(Ppq - Pq)
+    }
+
+    fun riskIncreasePurchasePrice():Double{
+//        m:Int, n:Int, delta:Double
+        Log.d(TAG, "riskIncreasePurchasePrice")
+        /**
+         * риск увеличения закупочной цены
+         * m - количество товаров с изменением цены
+         * n - количество групп товаров с изменением цены
+         * delta - величина изменения закупочной цены
+         * **/
+        var price: Double = 0.0
+        for(i in 0 until m ){
+            for(j in  1 .. np){
+                price += delta *j
+            }
+        }
+
+        return price
+    }
+
+    fun prepaymentRisk(): Double{
+//        prepayment: Double, t:Double, dt: Double, beta:Double
+        /**
+         * риск, определяемый предоплатой
+         * prepayment - размер предоплаты
+         * t - время до фактического получения товара
+         * dt - время фактического получения товара
+         * **/
+        Log.d(TAG, "prepaymentRisk")
+
+        val pow: Double = (1+beta).pow(t/dt)
+
+        return prepayment * pow
+
+    }
+
+
+
     fun calculateRisk(): List<String>{
-        var commonSummCredit: Double = simpleDeposit()
-        var commonSummCreditRub = commonSummCredit * k1 // S0
-        var sumOfPercentsForCredit = sumPercents(p, commonSummCreditRub)
-        var purchaseAmountDollarStart = k1 * p // сумма закупки товаров и кредита в доллларах
-        var purchaseAmountDollarEnd = k2 * p // сумма долга для возврата по кредиту(Pk)
-        var commonSumCreditEnd = commonSummCredit *k2 // Sk
-        var sumOfPercentsForCreditEnd = sumPercents(purchaseAmountDollarEnd, commonSumCreditEnd) // Ik
-        var valueCurrencyRisk = currencyRisk(purchaseAmountDollarEnd, sumOfPercentsForCreditEnd)
-        var inflationLvl = numberUtil.roundTo(lvlInflation(commonSumCreditEnd, commonSummCreditRub)) // a
-        var inflationIndex = indexInflation(inflationLvl,1)
-        var inlfationRisk =  riskInflation(commonSumCreditEnd, inflationIndex) //Ra
-        var inflationRiskDollars = numberUtil.roundTo(inlfationRisk/k2)
-        var ia = fisherDeposit(i, inflationLvl)
-        var factDeposit = depositWithInflation(ia, inflationLvl) // ставка с учетом инфляции i
-        var creditSumStartOperationWithInflation = sumCreditStartOperationWithInflation(commonSumCreditEnd, 1+inflationLvl) // S^a_k
-        var factPercentsCredit = sumPercents(purchaseAmountDollarStart, creditSumStartOperationWithInflation)
+        /**
+         * Вычисление коммерческого риска
+         * **/
+        Log.d(TAG, "sumCreditStartOperationWithInflation")
+        val commonSummCredit: Double = simpleDeposit()
+        val commonSummCreditRub = commonSummCredit * k1 // S0
+        val sumOfPercentsForCredit = sumPercents(p, commonSummCreditRub)
+        val purchaseAmountDollarStart = k1 * p // сумма закупки товаров и кредита в доллларах
+        val purchaseAmountDollarEnd = k2 * p // сумма долга для возврата по кредиту(Pk)
+        val commonSumCreditEnd = commonSummCredit *k2 // Sk
+        val sumOfPercentsForCreditEnd = sumPercents(purchaseAmountDollarEnd, commonSumCreditEnd) // Ik
+        val valueCurrencyRisk = currencyRisk(purchaseAmountDollarEnd, sumOfPercentsForCreditEnd)
+        val inflationLvl = numberUtil.roundTo(lvlInflation(commonSumCreditEnd, commonSummCreditRub)) // a
+        val inflationIndex = indexInflation(inflationLvl,1)
+        val inlfationRisk =  riskInflation(commonSumCreditEnd, inflationIndex) //Ra
+        val inflationRiskDollars = numberUtil.roundTo(inlfationRisk/k2)
+        val ia = fisherDeposit(i, inflationLvl)
+        val factDeposit = depositWithInflation(ia, inflationLvl) // ставка с учетом инфляции i
+        val creditSumStartOperationWithInflation = sumCreditStartOperationWithInflation(commonSumCreditEnd, 1+inflationLvl) // S^a_k
+        val factPercentsCredit = sumPercents(purchaseAmountDollarStart, creditSumStartOperationWithInflation)
+        val poolQualityRisk = riskPoolQuality()
+        val increasePurchasePrice = riskIncreasePurchasePrice()
+        val riskPrepayment = prepaymentRisk()
+
         // TODO: Виды рисков
         val result: String = "Общая сумма выплат кредита и процентов в конце операции: ${numberUtil.roundTo(commonSummCredit)} долл&\n" +
                 "Обшая сумма выплат кредита и процентов в конце операции: ${numberUtil.roundTo(commonSummCreditRub)} руб&\n" +
@@ -110,7 +179,10 @@ class CommercialRiskCalculator(
                 "Ставка по формуле фишера: ${ia}&\n" +
                 "Фактическая ставка: ${numberUtil.roundTo(factDeposit)}&\n" +
                 "Вся сумма оплаты по кредиту с учетом инфляции: ${numberUtil.roundTo(creditSumStartOperationWithInflation)} руб.&\n" +
-                "Фактические проценты за кредит: ${numberUtil.roundTo(factPercentsCredit)} руб."
+                "Фактические проценты за кредит: ${numberUtil.roundTo(factPercentsCredit)} руб.&" +
+                "Риск потери качества: ${poolQualityRisk} долл.&" +
+                "Риск, связанный с увеличением закупочной цены: ${numberUtil.roundTo(increasePurchasePrice)} долл.&" +
+                "Риск, определяемый предоплатой: ${numberUtil.roundTo(riskPrepayment)} руб."
         return result.split("&")
     }
 

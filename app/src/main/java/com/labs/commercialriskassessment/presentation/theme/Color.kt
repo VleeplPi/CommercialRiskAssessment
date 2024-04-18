@@ -15,6 +15,8 @@ val LightGreyColor = Color(0XFFF7F7F7)
 
 val BlackColor = Color(0xFF1C1F1E)
 val WhiteColor = Color(0xFFF1F1F1)
+val RedColor = Color(0xFFFF2164)
+
 val AccentLightGreenColor = Color(0xFF73ECC4)
 
 val GreenGradient = listOf(AccentLightGreenColor,AccentLightGreenColor)

@@ -42,8 +42,8 @@ fun MainScreen(){
         mutableStateOf(listOf(""))
     }
     InitValueFormComponent(
-        onClickApplyBtn = {p,n,i,k1,k2 ->
-            val commercialRiskCalculator: CommercialRiskCalculator = CommercialRiskCalculator(p,n,i,k1,k2)
+        onClickApplyBtn = {p,n,i,k1,k2,Npq,Pq,iq,m,np,delta, prepayment,t,dt,beta ->
+            val commercialRiskCalculator: CommercialRiskCalculator = CommercialRiskCalculator(p,n,i,k1,k2, Npq,Pq,iq,m,np,delta,prepayment,t,dt,beta)
             result.value = commercialRiskCalculator.calculateRisk()
             showModalResult.value = true
         }
