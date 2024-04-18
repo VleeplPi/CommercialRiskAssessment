@@ -32,10 +32,10 @@ fun PrimaryOutlinedTextField(
     enabled: Boolean = true,
     icon: Painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowRight),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    modifier: Modifier = Modifier.fillMaxWidth()
 ){
     OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(vertical = lowPadding)
             .clip(componentShapes.small),
         value = textValue,
