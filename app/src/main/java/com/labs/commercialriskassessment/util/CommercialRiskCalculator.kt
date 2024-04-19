@@ -191,7 +191,7 @@ class CommercialRiskCalculator(
             val beta: Double = numberUtil.roundTo(nextDouble(beta_start, beta_end))
             Log.d(TAG, "${prepayment}\t${t}\t${dt}\t${beta}\t")
             val riskPrepayment: Double = prepaymentRisk(prepayment,t,dt,beta)
-            prepaymentRiskTable[simulation] = doubleArrayOf(prepayment,t,dt, beta, riskPrepayment)
+            prepaymentRiskTable[simulation] = doubleArrayOf(prepayment,t,dt, beta, numberUtil.roundTo(riskPrepayment))
         }
 
         return prepaymentRiskTable

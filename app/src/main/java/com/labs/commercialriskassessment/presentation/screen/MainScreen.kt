@@ -59,10 +59,13 @@ fun MainScreen(){
     val result = remember {
         mutableStateOf(listOf(""))
     }
-    val headersPoolQuality: Array<String> = arrayOf("количество испорченного товара",
+    val headersPoolQuality: Array<String> = arrayOf(
+        "количество испорченного товара",
         "стоимость товара хорошего качества",
-        "скидка на испорченный товар",)
-    val resultPoolQuality = remember {
+        "скидка на испорченный товар",
+        "Риск, потери качества"
+        )
+    val resultPoolQualityRisk = remember {
         mutableStateOf(
             arrayOf(
                 doubleArrayOf(),
@@ -77,7 +80,8 @@ fun MainScreen(){
             "размер предоплаты",
             "время до фактического получения товара",
             "время фактического получения товара",
-            "коэффециент роста капитала"
+            "коэффециент роста капитала",
+            "Риск, определяемой предоплатой"
         )
     }
     val resultPrepaymentRisk = remember {
@@ -114,8 +118,8 @@ fun MainScreen(){
         },
         onClickMonteCarloPoolQualityRisk = {Npq_start,Npq_end,Pq_start,Pq_end,iq_start,iq_end,countSimulation, ->
             val commercialRiskCalculator: CommercialRiskCalculator = CommercialRiskCalculator()
-            resultPoolQuality.value = commercialRiskCalculator.monteCarloRiskPoolQuality(Npq_start,Npq_end,Pq_start,Pq_end,iq_start,iq_end,countSimulation)
-            Log.d(TAG, "resultPoolQuality: ${resultPoolQuality.value.size}")
+            resultPoolQualityRisk.value = commercialRiskCalculator.monteCarloRiskPoolQuality(Npq_start,Npq_end,Pq_start,Pq_end,iq_start,iq_end,countSimulation)
+            Log.d(TAG, "resultPoolQualityRisk: ${resultPoolQualityRisk.value.size}")
         }
 
     )
@@ -174,18 +178,115 @@ fun MainScreen(){
                     values = riskValues.value
                 )
             }
-//            items(resultPrepaymentRisk.value.size){rowId ->
-//                Text(
-//                    modifier = Modifier
-//                        .border(1.dp, Color.Black)
-//                        .width(200.dp)
-//                        .padding(5.dp),
-//                    text = "${resultPrepaymentRisk.value[rowId]}",
-//                    fontSize = 18.sp,
-//                    textAlign = TextAlign.Start,
-//                    letterSpacing = 2.sp
-//                )
-//            }
+            item{
+                Text(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    text = "Метод Монте-Карло для риска, определяемого предоплатой:",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    letterSpacing = 2.sp
+                )
+                LazyRow(
+                    userScrollEnabled = false,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top=10.dp)
+                ){
+                    items(headersPrepaymentRisk){header ->
+                        Text(
+                            modifier = Modifier
+                                .border(1.dp, Color.Black)
+                                .width(80.dp)
+                                .padding(5.dp),
+                            text = header,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            letterSpacing = 2.sp
+                        )
+                    }
+                }
+            }
+            items(resultPrepaymentRisk.value.size){rowId ->
+                LazyRow(
+                    userScrollEnabled = false,
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    items(resultPrepaymentRisk.value[rowId].size) { cellId ->
+                        Text(
+                            modifier = Modifier
+                                .border(1.dp, Color.Black)
+                                .width(80.dp)
+                                .padding(5.dp),
+                            text = "${resultPrepaymentRisk.value[rowId][cellId]}",
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            letterSpacing = 2.sp
+                        )
+
+                    }
+                }
+
+            }
+            item{
+                Text(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+
+                    text = "Метод Монте-Карло для риска потери качества:",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    letterSpacing = 2.sp
+                )
+                LazyRow(
+                    userScrollEnabled = false,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(top=10.dp)
+                ){
+                    items(headersPoolQuality){header ->
+                        Text(
+                            modifier = Modifier
+                                .border(1.dp, Color.Black)
+                                .width(100.dp)
+                                .padding(top=5.dp),
+                            text = header,
+                            softWrap = true,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            letterSpacing = 2.sp
+                        )
+                    }
+                }
+            }
+            items(resultPoolQualityRisk.value.size){rowId ->
+                LazyRow(
+                    userScrollEnabled = false,
+                    verticalAlignment = Alignment.CenterVertically,
+
+                )
+                {
+                    items(resultPoolQualityRisk.value[rowId].size) { cellId ->
+                        Text(
+                            modifier = Modifier
+                                .border(1.dp, Color.Black)
+                                .width(100.dp)
+                                .padding(5.dp),
+                            text = "${resultPrepaymentRisk.value[rowId][cellId]}",
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center,
+                            letterSpacing = 2.sp
+                        )
+
+                    }
+                }
+
+            }
         }
     }
 }
